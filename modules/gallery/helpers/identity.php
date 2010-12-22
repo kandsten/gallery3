@@ -161,13 +161,18 @@ class identity_Core {
     return IdentityProvider::instance()->create_user($name, $full_name, $password, $email);
   }
 
+
   /**
    * @see IdentityProvider_Driver::is_correct_password.
    */
   static function is_correct_password($user, $password) {
     return IdentityProvider::instance()->is_correct_password($user, $password);
   }
-
+  
+  static function user_by_credentials($credentials) {
+    return module::hook("user_verify_credentials", $credentials);
+  }
+  
   /**
    * @see IdentityProvider_Driver::lookup_user.
    */

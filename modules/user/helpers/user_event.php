@@ -19,6 +19,18 @@
  */
 
 class user_event_Core {
+  static function user_verify_credentials($credentials) {
+    $username = $credentials['username'];
+    $password = $credentials['password'];
+    
+    $user = IdentityProvider::instance()->lookup_user_by_name($username);
+    if (IdentityProvider::instance()->is_correct_password($user, $password)) {
+      return $user;
+    }
+    
+    return false;
+  }
+  
   static function admin_menu($menu, $theme) {
     $menu->add_after("appearance_menu", Menu::factory("link")
                      ->id("users_groups")

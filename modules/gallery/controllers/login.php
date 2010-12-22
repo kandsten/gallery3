@@ -65,8 +65,10 @@ class Login_Controller extends Controller {
     $form = auth::get_login_form($url);
     $valid = $form->validate();
     if ($valid) {
-      $user = identity::lookup_user_by_name($form->login->inputs["name"]->value);
-      if (empty($user) || !identity::is_correct_password($user, $form->login->password->value)) {
+      $user = identity::user_by_credentials(array(
+      	'username' => $form->login->inputs["name"]->value,
+      	'password' => $form->login->password->value));
+      if ($user == false) {
         $form->login->inputs["name"]->add_error("invalid_login", 1);
         $name = $form->login->inputs["name"]->value;
         log::warning("user", t("Failed login for %name", array("name" => $name)));

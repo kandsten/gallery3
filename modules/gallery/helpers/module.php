@@ -358,6 +358,31 @@ class module_Core {
     $config->set(
       "core.modules", array_merge($kohana_modules, $config->get("core.modules")));
   }
+  
+  /**
+   * Hook - much like event, but with a return value from the first callee who happens to 
+   * return one that isn't FALSE
+   */ 
+  static function hook($name, &$data=null) {
+    $args = func_get_args();
+    array_shift($args);
+    $function = str_replace(".", "_", $name);
+    
+    foreach (self::$active as $module) {
+      if ($module->name == "gallery") {
+        continue;
+      }
+      $class = "{$module->name}_event";
+      if (method_exists($class, $function)) {
+        $return = call_user_func_array(array($class, $function), $args);
+        if ($return != false) {
+          return $return;
+        }
+      }
+    }
+    
+    return false;
+  }
 
   /**
    * Run a specific event on all active modules.
